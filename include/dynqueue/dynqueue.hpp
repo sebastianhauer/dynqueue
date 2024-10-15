@@ -5,9 +5,9 @@
 #include <algorithm>
 #include <cstddef>
 
-struct Queue
+struct dynqueue
 {
-    explicit Queue(std::size_t capacity) : capacity_{capacity}
+    explicit dynqueue(std::size_t capacity) : capacity_{capacity}
     {
         head_ = tail_ = data_ = new int[capacity];
     }
@@ -28,7 +28,7 @@ private:
     {
         std::size_t new_capacity = capacity_ * 2;
         int *new_data = new int[capacity_];
-        const int *data_end = data_ + capacity_;
+        int * const data_end = data_ + capacity_;
         std::copy(head_, data_end, new_data);
 
         delete[] data_;
