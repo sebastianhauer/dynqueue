@@ -3,15 +3,23 @@
 
 struct dynqueue
 {
-    explicit dynqueue(std::size_t capacity) : capacity_{capacity}
+    explicit dynqueue(const std::size_t capacity = 32) : data_{new int[capacity]}, data_end_{data_ + capacity}, head_{data_}, tail_{data_}
     {
-        head_ = tail_ = data_ = new int[capacity];
+    }
+
+    std::size_t capacity() const
+    {
+        return data_end_ - data_;
+    }
+
+    std::size_t size() const
+    {
+        return tail_ - head_;
     }
 
     void enqueue(int key)
     {
-        const int *data_end = data_ + capacity_;
-        if (tail_ >= data_end)
+        if (tail_ >= data_end_)
         {
             grow();
         }
@@ -22,18 +30,21 @@ struct dynqueue
 private:
     void grow()
     {
-        std::size_t new_capacity = capacity_ * 2;
-        int *new_data = new int[capacity_];
-        int * const data_end = data_ + capacity_;
-        std::copy(head_, data_end, new_data);
+        const auto sz = size();
+        const auto new_capacity = capacity() * 2;
+        auto new_data = new int[new_capacity];
+        auto new_data_end = data_ + new_capacity;
+        std::copy(head_, data_end_, new_data);
+        head_ = new_data;
+        tail_ = head_ + sz;
 
         delete[] data_;
         data_ = new_data;
-        capacity_ = new_capacity;
+        data_end_ = data_ + new_capacity;
     }
 
-    std::size_t capacity_;
     int *data_ = nullptr;
+    int *data_end_ = nullptr;
     int *head_ = nullptr;
     int *tail_ = nullptr;
 };

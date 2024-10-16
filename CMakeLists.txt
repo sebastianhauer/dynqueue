@@ -30,5 +30,8 @@ _set_project_warnings(
 
 include(Dependencies.cmake)
 
+include(CTest)
+enable_testing()
+
 add_subdirectory(include)
 add_subdirectory(tests)
