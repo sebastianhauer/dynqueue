@@ -2,16 +2,14 @@
 
 #include <dynqueue/dynqueue.hpp>
 
-TEST_CASE("new queues are empty and have the expected capacity")
-{
-    auto q = dynqueue(16);
+TEST_CASE("new queues are empty and have the expected capacity") {
+    auto q = dynqueue<int>(16);
     REQUIRE(q.size() == 0);
     REQUIRE(q.capacity() == 16);
 }
 
-TEST_CASE("queue size increases while enqueing")
-{
-    auto q = dynqueue(2);
+TEST_CASE("queue size increases while enqueing") {
+    auto q = dynqueue<int>(2);
     q.enqueue(1);
     REQUIRE(q.size() == 1);
     q.enqueue(2);
@@ -20,9 +18,8 @@ TEST_CASE("queue size increases while enqueing")
     REQUIRE(q.size() == 3);
 }
 
-TEST_CASE("queue capacity should double")
-{
-    auto q = dynqueue(1);
+TEST_CASE("queue capacity should double") {
+    auto q = dynqueue<int>(1);
     REQUIRE(q.capacity() == 1);
     q.enqueue(1);
     REQUIRE(q.capacity() == 1);
