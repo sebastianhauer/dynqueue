@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #include <cstddef>
 #include <memory>
 
@@ -14,12 +15,25 @@ template <typename T> struct dynqueue {
 
     std::size_t size() const { return tail_ - head_; }
 
+    bool empty() const { return size() == 0; }
+
     void enqueue(value_type key) {
-        if (tail_ >= data_end_) {
+        if (size() == capacity()) {
             grow();
+        } else if (tail_ >= data_end_) {
+            shift_to_start();
         }
+        assert(head_ <= tail_);
+        assert(tail_ < data_end_);
+        assert(tail_ >= data_.get());
         *tail_ = key;
         ++tail_;
+    }
+
+    value_type dequeue() {
+        assert(head_ < tail_);
+        assert(head_ < data_end_);
+        return *head_++;
     }
 
   private:
@@ -30,8 +44,15 @@ template <typename T> struct dynqueue {
         std::copy(head_, data_end_, new_data.get());
         head_ = new_data.get();
         tail_ = head_ + sz;
-        data_.swap(new_data);
+        data_ = std::move(new_data);
         data_end_ = data_.get() + new_capacity;
+    }
+
+    void shift_to_start() {
+        const auto sz = size();
+        std::move(head_, tail_, data_.get());
+        head_ = data_.get();
+        tail_ = head_ + sz;
     }
 
     std::unique_ptr<value_type[]> data_;

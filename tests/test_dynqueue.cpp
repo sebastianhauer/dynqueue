@@ -29,3 +29,37 @@ TEST_CASE("queue capacity should double") {
     REQUIRE(q.size() == 3);
     REQUIRE(q.capacity() == 4);
 }
+
+TEST_CASE("queue should dequeue from the front and the size should change") {
+    auto q = dynqueue<int>(16);
+    q.enqueue(1);
+    q.enqueue(2);
+    q.enqueue(3);
+    REQUIRE(q.size() == 3);
+
+    REQUIRE(q.dequeue() == 1);
+    REQUIRE(q.size() == 2);
+
+    REQUIRE(q.dequeue() == 2);
+    REQUIRE(q.size() == 1);
+
+    REQUIRE(q.dequeue() == 3);
+    REQUIRE(q.size() == 0);
+}
+
+TEST_CASE(
+    "the capacity should not change when enquing and dequeue repeatedly") {
+    auto q = dynqueue<int>(2);
+    q.enqueue(1);
+    q.enqueue(2);
+    REQUIRE(q.capacity() == 2);
+
+    REQUIRE(q.dequeue() == 1);
+    REQUIRE(q.capacity() == 2);
+
+    q.enqueue(3);
+    REQUIRE(q.capacity() == 2);
+
+    REQUIRE(q.dequeue() == 2);
+    REQUIRE(q.capacity() == 2);
+}
